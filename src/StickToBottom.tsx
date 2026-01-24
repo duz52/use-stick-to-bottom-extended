@@ -144,9 +144,14 @@ export namespace StickToBottom {
 	export interface ContentProps
 		extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
 		children: ((context: StickToBottomContext) => ReactNode) | ReactNode;
+		scrollClassName?: string;
 	}
 
-	export function Content({ children, ...props }: ContentProps): ReactNode {
+	export function Content({
+		children,
+		scrollClassName,
+		...props
+	}: ContentProps): ReactNode {
 		const context = useStickToBottomContext();
 
 		return (
@@ -157,6 +162,7 @@ export namespace StickToBottom {
 					width: "100%",
 					scrollbarGutter: "stable both-edges",
 				}}
+				className={scrollClassName}
 			>
 				<div {...props} ref={context.contentRef}>
 					{typeof children === "function" ? children(context) : children}
