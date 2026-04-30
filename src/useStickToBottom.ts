@@ -517,6 +517,7 @@ export const useStickToBottom = (
 
 	const contentRef = useRefCallback((content) => {
 		state.resizeObserver?.disconnect();
+		state.resizeObserver = undefined;
 
 		if (!content) {
 			return;
