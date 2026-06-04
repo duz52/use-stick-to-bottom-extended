@@ -1,13 +1,12 @@
 # `useStickToBottom`
 
-> Designed with AI chat bots in mind, [powering `bolt.new`](https://bolt.new)
+> Designed with AI chat bots in mind
 
-[![npm version](https://img.shields.io/npm/v/use-stick-to-bottom.svg?style=flat-square)](https://www.npmjs.com/package/use-stick-to-bottom)
-[![npm downloads](https://img.shields.io/npm/dm/use-stick-to-bottom.svg?style=flat-square)](https://www.npmjs.com/package/use-stick-to-bottom)
-[![Demo](https://img.shields.io/badge/StackBlitz-Demo-blue.svg?style=flat-square)](https://stackblitz.com/~/github.com/samdenty/use-stick-to-bottom?file=demo/Demo.tsx)
-[![Sponsor](https://img.shields.io/github/sponsors/samdenty)](https://github.com/sponsors/samdenty)
+[![npm downloads](https://www.shieldcn.dev/npm/dm/use-stick-to-bottom.svg?variant=branded&size=sm)](https://www.npmjs.com/package/use-stick-to-bottom)
+[![Total npm downloads](https://www.shieldcn.dev/npm/dw/use-stick-to-bottom.svg?variant=secondary&size=sm)](https://www.npmjs.com/package/use-stick-to-bottom)
+[![@samdenty on X](https://www.shieldcn.dev/x/follow/samdenty.svg?variant=branded&size=sm)](https://x.com/samdenty)
 
-> If you like this package, consider getting your company to [sponsor @samdenty on GitHub](https://github.com/sponsors/samdenty).
+**If you or your company finds this hook useful [Sponsor me on GitHub](https://github.com/sponsors/samdenty)**
 
 A lightweight **zero-dependency** React hook + Component that automatically sticks to the bottom of container and smoothly animates the content to keep it's visual position on screen whilst new content is being added.
 
