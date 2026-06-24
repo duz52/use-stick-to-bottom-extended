@@ -4,7 +4,7 @@
 
 This package is a fork of the original [`use-stick-to-bottom`](https://github.com/stackblitz-labs/use-stick-to-bottom). The original implementation and copyright belong to StackBlitz/Sam Denty. This extended fork is maintained by [duz52](https://github.com/duz52/).
 
-This fork adds `resize={false}` / `resize: false`, which disables ResizeObserver-driven automatic scrolling after initial layout. Use it when a chat should scroll once after sending a new message only if the user was already at the bottom, without continuing to stick to the bottom while the window is being resized.
+This fork adds `append` and `resize={false}` / `resize: false`, allowing chat UIs to scroll once when a new message element is appended while avoiding sticky scrolling during streaming content growth or window resize.
 
 A lightweight **zero-dependency** React hook + Component that automatically sticks to the bottom of container and smoothly animates the content to keep it's visual position on screen whilst new content is being added.
 
@@ -25,7 +25,7 @@ A lightweight **zero-dependency** React hook + Component that automatically stic
 ## Installation
 
 ```bash
-npm install github:duz52/use-stick-to-bottom-extended
+npm install use-stick-to-bottom-extended
 ```
 
 ## Usage
@@ -37,7 +37,12 @@ import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom-exte
 
 function Chat() {
   return (
-    <StickToBottom className="h-[50vh] relative" resize="smooth" initial="smooth">
+    <StickToBottom
+      className="h-[50vh] relative"
+      initial="smooth"
+      append="smooth"
+      resize={false}
+    >
       <StickToBottom.Content className="flex flex-col gap-4">
         {messages.map((message) => (
           <Message key={message.id} message={message} />
@@ -66,52 +71,28 @@ function ScrollToBottom() {
 }
 ```
 
-### One-shot send scroll without resize stickiness
+### Scroll on appended messages only
 
-Set `resize={false}` to disable automatic scrolling from content resize events after the initial layout. Capture whether the user was at the bottom before appending the message, then scroll once after the message is rendered.
+Set `append` to control scrolling when a new direct child is appended to the content element. Set `resize={false}` to disable automatic scrolling for content height changes that do not append a new direct child, such as streaming text growth, image loading, markdown reflow, or window resize.
 
 ```jsx
-import { useLayoutEffect, useRef, useState } from 'react';
-import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom-extended';
+import { useStickToBottom } from 'use-stick-to-bottom-extended';
 
-function Chat() {
-  const [messages, setMessages] = useState([]);
-
-  return (
-    <StickToBottom className="h-[50vh] relative" resize={false} initial="instant">
-      <ChatContent messages={messages} setMessages={setMessages} />
-    </StickToBottom>
-  );
-}
-
-function ChatContent({ messages, setMessages }) {
-  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
-  const shouldScrollAfterSend = useRef(false);
-
-  const sendMessage = (text) => {
-    shouldScrollAfterSend.current = isAtBottom;
-    setMessages((current) => [...current, { id: crypto.randomUUID(), text }]);
-  };
-
-  useLayoutEffect(() => {
-    if (!shouldScrollAfterSend.current) {
-      return;
-    }
-
-    shouldScrollAfterSend.current = false;
-    scrollToBottom({ animation: 'instant' });
-  }, [messages.length, scrollToBottom]);
+function Messages({ messages }) {
+  const { scrollRef, contentRef } = useStickToBottom({
+    initial: 'smooth',
+    append: 'smooth',
+    resize: false,
+  });
 
   return (
-    <>
-      <StickToBottom.Content className="flex flex-col gap-4">
+    <div ref={scrollRef} style={{ overflow: 'auto' }}>
+      <div ref={contentRef}>
         {messages.map((message) => (
           <Message key={message.id} message={message} />
         ))}
-      </StickToBottom.Content>
-
-      <ChatBox onSend={sendMessage} />
-    </>
+      </div>
+    </div>
   );
 }
 ```
@@ -122,7 +103,10 @@ function ChatContent({ messages, setMessages }) {
 import { useStickToBottom } from 'use-stick-to-bottom-extended';
 
 function Component() {
-  const { scrollRef, contentRef } = useStickToBottom({ resize: false });
+  const { scrollRef, contentRef } = useStickToBottom({
+    append: 'smooth',
+    resize: false,
+  });
 
   return (
     <div style={{ overflow: 'auto' }} ref={scrollRef}>
@@ -138,8 +122,14 @@ function Component() {
 
 ## Extended API
 
+### `append`
+
+The original package uses `resize` for every positive content resize after initial layout. This fork adds `append` for the narrower case where the content element's direct child count increases.
+
+If `append` is omitted, it falls back to `resize`, preserving the original behavior. If `append` is set and `resize` is `false`, a chat can scroll once when a new message element is appended without continuing to stick while that message streams or reflows.
+
 ### `resize: false`
 
 The original package accepts `resize` as an animation setting, such as `"smooth"`, `"instant"`, or a spring animation object. This fork also accepts `false`.
 
-When `resize` is `false`, the hook still observes content size changes so scroll state stays accurate, but it does not automatically call `scrollToBottom` for positive content resizes after the first layout. That lets applications implement explicit, one-shot scroll behavior on send while avoiding continued bottom locking during window resize.
+When `resize` is `false`, the hook still observes content size changes so scroll state stays accurate, but it does not automatically call `scrollToBottom` for positive content resizes after the first layout.

@@ -4,6 +4,7 @@ Fork release maintained by https://github.com/duz52/.
 
 - Renamed the package metadata to `use-stick-to-bottom-extended`.
 - Added `resize: false` / `resize={false}` to disable ResizeObserver-driven automatic scroll-to-bottom after the initial layout.
+- Added `append` / `append={...}` to control automatic scroll-to-bottom when a new direct child is appended to the content element.
 - Documented one-shot send scrolling for chat UIs that should scroll only when the user was already at the bottom and should not keep sticking during window resize.
 
 # 1.1.0

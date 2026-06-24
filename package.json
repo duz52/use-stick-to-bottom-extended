@@ -10,7 +10,7 @@
   "description": "A lightweight React Hook intended mainly for AI chat applications, with optional resize auto-scroll control",
   "homepage": "https://github.com/duz52/use-stick-to-bottom-extended#readme",
   "private": false,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "files": [
     "dist"
