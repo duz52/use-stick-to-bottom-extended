@@ -79,7 +79,7 @@ export type GetTargetScrollTop = (
 ) => number;
 
 export interface StickToBottomOptions extends SpringAnimation {
-	resize?: Animation;
+	resize?: Animation | false;
 	initial?: Animation | boolean;
 	targetScrollTop?: GetTargetScrollTop;
 }
@@ -366,6 +366,10 @@ export const useStickToBottom = (
 					 * requested animation.
 					 */
 					if (state.scrollTop < state.calculatedTargetScrollTop) {
+						if (optionsRef.current.resize === false) {
+							return state.isNearBottom;
+						}
+
 						return scrollToBottom({
 							animation: mergeAnimations(
 								optionsRef.current,
@@ -546,20 +550,25 @@ export const useStickToBottom = (
 				 * If it's a positive resize, scroll to the bottom when
 				 * we're already at the bottom.
 				 */
-				const animation = mergeAnimations(
-					optionsRef.current,
-					previousHeight
-						? optionsRef.current.resize
-						: optionsRef.current.initial,
-				);
+				const resize = previousHeight
+					? optionsRef.current.resize
+					: optionsRef.current.initial;
 
-				scrollToBottom({
-					animation,
-					wait: true,
-					preserveScrollPosition: true,
-					duration:
-						animation === "instant" ? undefined : RETAIN_ANIMATION_DURATION_MS,
-				});
+				if (resize === false) {
+					setIsAtBottom(state.isNearBottom);
+				} else {
+					const animation = mergeAnimations(optionsRef.current, resize);
+
+					scrollToBottom({
+						animation,
+						wait: true,
+						preserveScrollPosition: true,
+						duration:
+							animation === "instant"
+								? undefined
+								: RETAIN_ANIMATION_DURATION_MS,
+					});
+				}
 			} else {
 				/**
 				 * Else if it's a negative resize, check if we're near the bottom
