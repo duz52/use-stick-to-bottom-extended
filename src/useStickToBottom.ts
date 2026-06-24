@@ -79,6 +79,7 @@ export type GetTargetScrollTop = (
 ) => number;
 
 export interface StickToBottomOptions extends SpringAnimation {
+	append?: Animation | false;
 	resize?: Animation | false;
 	initial?: Animation | boolean;
 	targetScrollTop?: GetTargetScrollTop;
@@ -528,10 +529,14 @@ export const useStickToBottom = (
 		}
 
 		let previousHeight: number | undefined;
+		let previousChildCount: number | undefined;
 
 		state.resizeObserver = new ResizeObserver(([entry]) => {
 			const { height } = entry.contentRect;
 			const difference = height - (previousHeight ?? height);
+			const childCount = content.childElementCount;
+			const didAppend =
+				previousChildCount !== undefined && childCount > previousChildCount;
 
 			state.resizeDifference = difference;
 
@@ -551,7 +556,9 @@ export const useStickToBottom = (
 				 * we're already at the bottom.
 				 */
 				const resize = previousHeight
-					? optionsRef.current.resize
+					? didAppend
+						? (optionsRef.current.append ?? optionsRef.current.resize)
+						: optionsRef.current.resize
 					: optionsRef.current.initial;
 
 				if (resize === false) {
@@ -582,6 +589,7 @@ export const useStickToBottom = (
 			}
 
 			previousHeight = height;
+			previousChildCount = childCount;
 
 			/**
 			 * Reset the resize difference after the scroll event
