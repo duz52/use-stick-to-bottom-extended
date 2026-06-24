@@ -1,12 +1,10 @@
-# `useStickToBottom`
+# `use-stick-to-bottom-extended`
 
 > Designed with AI chat bots in mind
 
-[![npm downloads](https://www.shieldcn.dev/npm/dm/use-stick-to-bottom.svg?variant=branded&size=sm)](https://www.npmjs.com/package/use-stick-to-bottom)
-[![Total npm downloads](https://www.shieldcn.dev/npm/dw/use-stick-to-bottom.svg?variant=secondary&size=sm)](https://www.npmjs.com/package/use-stick-to-bottom)
-[![@samdenty on X](https://www.shieldcn.dev/x/follow/samdenty.svg?variant=branded&size=sm)](https://x.com/samdenty)
+This package is a fork of the original [`use-stick-to-bottom`](https://github.com/stackblitz-labs/use-stick-to-bottom). The original implementation and copyright belong to StackBlitz/Sam Denty. This extended fork is maintained by [duz52](https://github.com/duz52/).
 
-**If you or your company finds this hook useful [Sponsor me on GitHub](https://github.com/sponsors/samdenty)**
+This fork adds `resize={false}` / `resize: false`, which disables ResizeObserver-driven automatic scrolling after initial layout. Use it when a chat should scroll once after sending a new message only if the user was already at the bottom, without continuing to stick to the bottom while the window is being resized.
 
 A lightweight **zero-dependency** React hook + Component that automatically sticks to the bottom of container and smoothly animates the content to keep it's visual position on screen whilst new content is being added.
 
@@ -27,7 +25,7 @@ A lightweight **zero-dependency** React hook + Component that automatically stic
 ## Installation
 
 ```bash
-npm install use-stick-to-bottom
+npm install github:duz52/use-stick-to-bottom-extended
 ```
 
 ## Usage
@@ -35,7 +33,7 @@ npm install use-stick-to-bottom
 ### `<StickToBottom>` Component
 
 ```jsx
-import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
+import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom-extended';
 
 function Chat() {
   return (
@@ -68,13 +66,63 @@ function ScrollToBottom() {
 }
 ```
 
+### One-shot send scroll without resize stickiness
+
+Set `resize={false}` to disable automatic scrolling from content resize events after the initial layout. Capture whether the user was at the bottom before appending the message, then scroll once after the message is rendered.
+
+```jsx
+import { useLayoutEffect, useRef, useState } from 'react';
+import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom-extended';
+
+function Chat() {
+  const [messages, setMessages] = useState([]);
+
+  return (
+    <StickToBottom className="h-[50vh] relative" resize={false} initial="instant">
+      <ChatContent messages={messages} setMessages={setMessages} />
+    </StickToBottom>
+  );
+}
+
+function ChatContent({ messages, setMessages }) {
+  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
+  const shouldScrollAfterSend = useRef(false);
+
+  const sendMessage = (text) => {
+    shouldScrollAfterSend.current = isAtBottom;
+    setMessages((current) => [...current, { id: crypto.randomUUID(), text }]);
+  };
+
+  useLayoutEffect(() => {
+    if (!shouldScrollAfterSend.current) {
+      return;
+    }
+
+    shouldScrollAfterSend.current = false;
+    scrollToBottom({ animation: 'instant' });
+  }, [messages.length, scrollToBottom]);
+
+  return (
+    <>
+      <StickToBottom.Content className="flex flex-col gap-4">
+        {messages.map((message) => (
+          <Message key={message.id} message={message} />
+        ))}
+      </StickToBottom.Content>
+
+      <ChatBox onSend={sendMessage} />
+    </>
+  );
+}
+```
+
 ### `useStickToBottom` Hook
 
 ```jsx
-import { useStickToBottom } from 'use-stick-to-bottom';
+import { useStickToBottom } from 'use-stick-to-bottom-extended';
 
 function Component() {
-  const { scrollRef, contentRef } = useStickToBottom();
+  const { scrollRef, contentRef } = useStickToBottom({ resize: false });
 
   return (
     <div style={{ overflow: 'auto' }} ref={scrollRef}>
@@ -87,3 +135,11 @@ function Component() {
   );
 }
 ```
+
+## Extended API
+
+### `resize: false`
+
+The original package accepts `resize` as an animation setting, such as `"smooth"`, `"instant"`, or a spring animation object. This fork also accepts `false`.
+
+When `resize` is `false`, the hook still observes content size changes so scroll state stays accurate, but it does not automatically call `scrollToBottom` for positive content resizes after the first layout. That lets applications implement explicit, one-shot scroll behavior on send while avoiding continued bottom locking during window resize.

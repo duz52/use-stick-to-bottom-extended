@@ -1,10 +1,16 @@
 {
-  "name": "use-stick-to-bottom",
+  "name": "use-stick-to-bottom-extended",
   "author": "Sam Denty <samddenty@gmail.com> (https://samdenty.io/)",
-  "description": "A lightweight React Hook intended mainly for AI chat applications, for smoothly sticking to bottom of messages",
-  "homepage": "https://use-stick-to-bottom.samdenty.io",
+  "contributors": [
+    {
+      "name": "duz52",
+      "url": "https://github.com/duz52/"
+    }
+  ],
+  "description": "A lightweight React Hook intended mainly for AI chat applications, with optional resize auto-scroll control",
+  "homepage": "https://github.com/duz52/use-stick-to-bottom-extended#readme",
   "private": false,
-  "version": "1.1.6",
+  "version": "1.2.0",
   "type": "module",
   "files": [
     "dist"
@@ -28,7 +34,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/samdenty/use-stick-to-bottom.git"
+    "url": "https://github.com/duz52/use-stick-to-bottom-extended.git"
+  },
+  "bugs": {
+    "url": "https://github.com/duz52/use-stick-to-bottom-extended/issues"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"

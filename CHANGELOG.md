@@ -1,3 +1,11 @@
+# 1.2.0
+
+Fork release maintained by https://github.com/duz52/.
+
+- Renamed the package metadata to `use-stick-to-bottom-extended`.
+- Added `resize: false` / `resize={false}` to disable ResizeObserver-driven automatic scroll-to-bottom after the initial layout.
+- Documented one-shot send scrolling for chat UIs that should scroll only when the user was already at the bottom and should not keep sticking during window resize.
+
 # 1.1.0
 
 Stable - Bumped version to signify a release with the new pausing feature https://x.com/samddenty/status/1907636864409817120. Also to start using proper semver, I was using the wrong semver versions for previous releases.

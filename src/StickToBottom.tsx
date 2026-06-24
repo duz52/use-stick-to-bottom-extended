@@ -180,7 +180,7 @@ export function useStickToBottomContext(): StickToBottomContext {
 	const context = useContext(StickToBottomContext);
 	if (!context) {
 		throw new Error(
-			"use-stick-to-bottom component context must be used within a StickToBottom component",
+			"use-stick-to-bottom-extended component context must be used within a StickToBottom component",
 		);
 	}
 
