@@ -80,6 +80,7 @@ export type GetTargetScrollTop = (
 
 export interface StickToBottomOptions extends SpringAnimation {
 	append?: Animation | false;
+	appendPreserveScrollPosition?: boolean;
 	resize?: Animation | false;
 	initial?: Animation | boolean;
 	targetScrollTop?: GetTargetScrollTop;
@@ -560,6 +561,9 @@ export const useStickToBottom = (
 						? (optionsRef.current.append ?? optionsRef.current.resize)
 						: optionsRef.current.resize
 					: optionsRef.current.initial;
+				const preserveScrollPosition =
+					!didAppend ||
+					optionsRef.current.appendPreserveScrollPosition !== false;
 
 				if (resize === false) {
 					setIsAtBottom(state.isNearBottom);
@@ -569,7 +573,7 @@ export const useStickToBottom = (
 					scrollToBottom({
 						animation,
 						wait: true,
-						preserveScrollPosition: true,
+						preserveScrollPosition,
 						duration:
 							animation === "instant"
 								? undefined

@@ -1,4 +1,8 @@
-# 1.2.0
+# 1.4.0
+
+- Added `appendPreserveScrollPosition: false` / `appendPreserveScrollPosition={false}` to allow appended children to trigger one scroll-to-bottom even when the user is not currently at the bottom.
+
+# 1.3.0
 
 Fork release maintained by https://github.com/duz52/.
 

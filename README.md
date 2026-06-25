@@ -4,7 +4,7 @@
 
 This package is a fork of the original [`use-stick-to-bottom`](https://github.com/stackblitz-labs/use-stick-to-bottom). The original implementation and copyright belong to StackBlitz/Sam Denty. This extended fork is maintained by [duz52](https://github.com/duz52/).
 
-This fork adds `append` and `resize={false}` / `resize: false`, allowing chat UIs to scroll once when a new message element is appended while avoiding sticky scrolling during streaming content growth or window resize.
+This fork adds `append`, `appendPreserveScrollPosition`, and `resize={false}` / `resize: false`, allowing chat UIs to scroll once when a new message element is appended while avoiding sticky scrolling during streaming content growth or window resize.
 
 A lightweight **zero-dependency** React hook + Component that automatically sticks to the bottom of container and smoothly animates the content to keep it's visual position on screen whilst new content is being added.
 
@@ -41,6 +41,7 @@ function Chat() {
       className="h-[50vh] relative"
       initial="smooth"
       append="smooth"
+      appendPreserveScrollPosition={false}
       resize={false}
     >
       <StickToBottom.Content className="flex flex-col gap-4">
@@ -82,6 +83,7 @@ function Messages({ messages }) {
   const { scrollRef, contentRef } = useStickToBottom({
     initial: 'smooth',
     append: 'smooth',
+    appendPreserveScrollPosition: false,
     resize: false,
   });
 
@@ -105,6 +107,7 @@ import { useStickToBottom } from 'use-stick-to-bottom-extended';
 function Component() {
   const { scrollRef, contentRef } = useStickToBottom({
     append: 'smooth',
+    appendPreserveScrollPosition: false,
     resize: false,
   });
 
@@ -127,6 +130,12 @@ function Component() {
 The original package uses `resize` for every positive content resize after initial layout. This fork adds `append` for the narrower case where the content element's direct child count increases.
 
 If `append` is omitted, it falls back to `resize`, preserving the original behavior. If `append` is set and `resize` is `false`, a chat can scroll once when a new message element is appended without continuing to stick while that message streams or reflows.
+
+### `appendPreserveScrollPosition`
+
+By default, automatic append scrolling preserves the user's scroll position and only scrolls when the user is already at the bottom.
+
+Set `appendPreserveScrollPosition: false` when a new appended child should always trigger one scroll-to-bottom, even if the user is currently reading older content. This only affects append events; non-append content resizes are still controlled by `resize`.
 
 ### `resize: false`
 
